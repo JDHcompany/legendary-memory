@@ -1,0 +1,8 @@
+sorted_configs/
+**pycache**/
+*.pyc
+.DS_Store
+Thumbs.db
+.venv/
+venv/
+env/
