@@ -1,0 +1,41 @@
+name: Hourly VLESS Auto Update
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Запуск ровно в начале каждого часа
+  workflow_dispatch:      # Разрешить ручной запуск из интерфейса GitHub
+
+permissions:
+  contents: write         # Разрешение на запись изменений обратно в репозиторий
+
+jobs:
+  update-configs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Run VLESS Sorter (Once Mode)
+        run: |
+          python vless_sorter.py --once
+
+      - name: Commit & Push Changes
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          
+          git add sorted_configs/*.txt
+          
+          if git diff --cached --quiet; then
+            echo "Нет изменений в конфигурациях. Пушить нечего."
+          else
+            git commit -m "Hourly Auto-Update VLESS [skip ci]"
+            git push origin main
+          fi
