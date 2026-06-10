@@ -1,4 +1,4 @@
-sorted_configs/
+#sorted_configs/
 **pycache**/
 *.pyc
 .DS_Store
